@@ -1,0 +1,14 @@
+#!/bin/bash
+# credit https://github.com/jerboaa from https://github.com/fabric8io-images/maven-builder/blob/d81dedbc298dee7e071ac2bc1e0050ae7ee1e5aa/set_java
+
+ARCH=$(uname -m)
+echo $ARCH
+
+if [[ ${ARCH} == 'x86_64' ]]; then
+  JAVA_32=$(alternatives --display java | grep family | grep i386 | cut -d' ' -f1)
+  alternatives --set java ${JAVA_32}
+  JAVAC_32=$(alternatives --display javac | grep family | grep i386 | cut -d' ' -f1)
+  # Maven actually uses javac, not java
+  alternatives --set javac ${JAVAC_32}
+  exit $?
+fi
