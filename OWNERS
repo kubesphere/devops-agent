@@ -2,6 +2,7 @@ approvers:
     - zryfish
     - rayzhou2017
     - shaowenchen
+    - linuxsuren
 
 reviewers:
     - rayzhou2017
@@ -20,3 +21,4 @@ reviewers:
     - wnxn
     - zheng1
     - soulseen
+    - linuxsuren
