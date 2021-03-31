@@ -48,7 +48,8 @@ It's a better way to provide jenkinsfile for compiling images, like base agent.
 
 ## Join & Contact Community
 
-- [Slack](https://join.slack.com/t/kubesphere/shared_invite/enQtNTE3MDIxNzUxNzQ0LTZkNTdkYWNiYTVkMTM5ZThhODY1MjAyZmVlYWEwZmQ3ODQ1NmM1MGVkNWEzZTRhNzk0MzM5MmY4NDc3ZWVhMjE) #sig-devops
+- Slack [#sig-devops](https://kubesphere.slack.com/messages/sig-devops)
 - [Twitter](https://twitter.com/KubeSphere)
-- [Mailing List](https://groups.google.com/forum/#!forum/kubesphere)
+- Mailing list [archive](https://groups.google.com/group/kubesphere-sig-devops/topics) | [subscribe](mailto:kubesphere-sig-devops+subscribe@googlegroups.com) | [unsubscribe](mailto:kubesphere-sig-devops+unsubscribe@googlegroups.com)
 - [Medium (Blog)](https://itnext.io/@kubesphere)
+
