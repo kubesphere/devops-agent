@@ -131,6 +131,13 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_HUB_USER }}
         password: ${{ secrets.DOCKER_HUB_SECRETS }}
+    - name: Login to GHCR
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GHCR_TOKEN }}
     - name: Build and push Docker images
       uses: docker/build-push-action@v2.4.0
       if: github.repository_owner == 'kubesphere'
