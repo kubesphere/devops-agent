@@ -1,4 +1,4 @@
-FROM kubespheredev/builder-base:latest
+FROM kubespheredev/builder-base:v3.1.0
 
 # java
 ENV JAVA_VERSIOIN 1.8.0
