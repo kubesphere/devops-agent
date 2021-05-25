@@ -1,4 +1,4 @@
-FROM kubespheredev/builder-base:latest
+FROM kubespheredev/builder-base:v3.1.0
 
 RUN yum -y groupinstall 'Development Tools'  && yum -y clean all --enablerepo='*'
 
