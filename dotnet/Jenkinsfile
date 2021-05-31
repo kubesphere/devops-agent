@@ -9,8 +9,8 @@ pipeline {
     stage('build and tag image') {
       steps {
         container('base') {
-          sh '''docker build -t kubespheredev/builder-base .
-docker tag kubespheredev/builder-base kubespheredev/builder-base:2.1.0'''
+          sh '''docker build -t kubespheredev/builder-dotnet .
+docker tag kubespheredev/builder-dotnet kubespheredev/builder-dotnet:2.1.0'''
         }
 
       }
@@ -24,19 +24,8 @@ docker tag kubespheredev/builder-base kubespheredev/builder-base:2.1.0'''
           withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,credentialsId : 'dockerhub-id' ,)]) {
             sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
           }
-            sh 'docker push kubespheredev/builder-base'
+            sh 'docker push kubespheredev/builder-dotnet'
         }
-      }
-    }
-    stage('update language image'){
-      when{
-        branch 'master'
-      }
-      steps{
-         build job:'../builder-maven/master', wait: false
-         build job:'../builder-nodejs/master', wait: false
-         build job:'../builder-go/master', wait: false
-         build job:'../builder-dotnet/master', wait: false
       }
     }
   }
