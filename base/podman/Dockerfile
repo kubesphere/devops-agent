@@ -29,11 +29,9 @@ RUN wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.gz &
     make && \
     make install && \
     mv /usr/local/git/bin/git /usr/bin/ && \
-    cd ..&& \
+    cd .. && \
     rm -rf git-2.9.5.tar.gz git-2.9.5 && \
     git version
-
-
 
 # Set the locale(en_US.UTF-8)
 ENV LANG en_US.UTF-8
@@ -54,6 +52,18 @@ RUN curl -o sonar_scanner.zip https://binaries.sonarsource.com/Distribution/sona
 ENV PATH $PATH:/usr/bin/sonar-scanner-$SONAR_SCANNER_VERSION-linux/bin
 
 COPY ./ ./
+
+ENV EXCLUDE_DOCKER 1
 RUN ./hack/install_utils.sh && rm -rf ./*
 
-CMD ["docker","version"]
+# Install podman
+RUN curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/devel:kubic:libcontainers:stable.repo && \
+    yum -y install podman fuse-overlayfs && \
+    echo "alias docker=podman" >> /root/.bashrc
+
+COPY storage.conf /etc/containers/storage.conf
+COPY containers.conf /etc/containers/containers.conf
+
+VOLUME /var/lib/containers
+
+CMD ["podman", "info"]
