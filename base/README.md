@@ -1,4 +1,4 @@
-There're two base images base on different container runtime here:
+There're two base images based on different container runtime:
 
 * Docker
 * Podman
