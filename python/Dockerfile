@@ -14,7 +14,6 @@ RUN yum -y install bzip2-devel libffi-devel libsqlite3x-devel && \
     ln -fs /usr/local/bin/python3.7 /usr/bin/python3 && \
     ln -fs /usr/local/bin/pip3.7 /usr/bin/pip && \
     python3 -m pip install --upgrade pip && \
-    python2 -m pip install --upgrade --force-reinstall pip && \
     sed -e 's|^#!/usr/bin/python|#!/usr/bin/python2.7|g' -i.bak /usr/bin/yum && \
     sed -e 's|^#! /usr/bin/python|#! /usr/bin/python2.7|g' -i.bak /usr/libexec/urlgrabber-ext-down && \
     yum -y remove bzip2-devel libffi-devel libsqlite3x-devel && \
