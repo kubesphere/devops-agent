@@ -18,7 +18,7 @@ This repo stores the build files of image for these podTemplate.
 
 Welcome to contribute.
 
-## Imagess
+## Images
 
 For production:
 
