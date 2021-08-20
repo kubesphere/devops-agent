@@ -28,6 +28,7 @@ For production:
 | `kubesphere/builder-go` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-go.svg)](https://hub.docker.com/r/kubesphere/builder-go/tags) |
 | `kubesphere/builder-maven` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-maven.svg)](https://hub.docker.com/r/kubesphere/builder-maven/tags) |
 | `kubesphere/builder-nodejs` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-nodejs.svg)](https://hub.docker.com/r/kubesphere/builder-nodejs/tags) |
+| `kubesphere/builder-python` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-python.svg)](https://hub.docker.com/r/kubesphere/builder-python/tags) |
 
 For development:
 
@@ -37,6 +38,7 @@ For development:
 | `kubespheredev/builder-go` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-go.svg)](https://hub.docker.com/r/kubespheredev/builder-go/tags) |
 | `kubespheredev/builder-maven` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-maven.svg)](https://hub.docker.com/r/kubespheredev/builder-maven/tags) |
 | `kubespheredev/builder-nodejs` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-nodejs.svg)](https://hub.docker.com/r/kubespheredev/builder-nodejs/tags) |
+| `kubespheredev/builder-python` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-python.svg)](https://hub.docker.com/r/kubespheredev/builder-python/tags) |
 
 ## How to Build
 
