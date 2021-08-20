@@ -18,7 +18,7 @@ This repo stores the build files of image for these podTemplate.
 
 Welcome to contribute.
 
-## Imagess
+## Images
 
 For production:
 
@@ -29,7 +29,7 @@ For production:
 | `kubesphere/builder-maven` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-maven.svg)](https://hub.docker.com/r/kubesphere/builder-maven/tags) |
 | `kubesphere/builder-nodejs` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-nodejs.svg)](https://hub.docker.com/r/kubesphere/builder-nodejs/tags) |
 | `kubesphere/builder-dotnet` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-dotnet.svg)](https://hub.docker.com/r/kubesphere/builder-dotnet/tags) |
-
+| `kubesphere/builder-python` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-python.svg)](https://hub.docker.com/r/kubesphere/builder-python/tags) |
 
 For development:
 
@@ -40,6 +40,7 @@ For development:
 | `kubespheredev/builder-maven` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-maven.svg)](https://hub.docker.com/r/kubespheredev/builder-maven/tags) |
 | `kubespheredev/builder-nodejs` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-nodejs.svg)](https://hub.docker.com/r/kubespheredev/builder-nodejs/tags) |
 | `kubespheredev/builder-dotnet` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-dotnet.svg)](https://hub.docker.com/r/kubespheredev/builder-dotnet/tags) |
+| `kubespheredev/builder-python` | [![Docker Pulls](https://img.shields.io/docker/pulls/kubespheredev/builder-python.svg)](https://hub.docker.com/r/kubespheredev/builder-python/tags) |
 
 ## How to Build
 
