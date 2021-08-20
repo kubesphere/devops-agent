@@ -1,4 +1,4 @@
-FROM kubespheredev/builder-base:v3.1.0
+FROM kubespheredev/builder-base:v3.1.0-podman
 
 ENV NODE_VERSION 10.16.3
 
