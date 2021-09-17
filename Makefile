@@ -11,3 +11,5 @@ build-maven-podman:
 push-maven-podman:
 	docker push kubespheredev/builder-maven:$(VERSION)-podman
 
+build-jdk11:
+	docker build maven -f maven/Dockerfile -t kubespheredev/builder-maven:$(VERSION)-jdk11 --build-arg JDK_VERSION=11
