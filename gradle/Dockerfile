@@ -6,7 +6,7 @@ RUN yum install -y java-${JAVA_VERSIOIN}-openjdk-devel java-${JAVA_VERSIOIN}-ope
     yum -y clean all
 
 # gradle6
-ENV GRADLE_VERSION=6.9.1
+ENV GRADLE_VERSION 6.9.1
 ENV GRADLE_HOME /usr/local/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:$PATH
 
