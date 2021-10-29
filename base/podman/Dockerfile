@@ -1,7 +1,7 @@
 FROM centos:7
 
 # utils
-RUN yum install -y epel-release && \
+RUN yum install -y epel-release ca-certificates && \
   yum install -y unzip \
   which \
   make \
