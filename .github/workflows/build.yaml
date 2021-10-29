@@ -173,9 +173,9 @@ jobs:
           kubespheredev/builder-go
           ghcr.io/${{ github.repository_owner }}/builder-go
         tags: |
-          type=ref,event=branch,suffix=1.16
-          type=ref,event=pr,suffix=1.16
-          type=semver,pattern=v{{version}},suffix=1.16
+          type=ref,event=branch,suffix=-1.16
+          type=ref,event=pr,suffix=-1.16
+          type=semver,pattern=v{{version}},suffix=-1.16
     - name: Docker meta for Contributors
       id: metaContributors
       if: github.repository_owner != 'kubesphere'
@@ -184,9 +184,9 @@ jobs:
         images: |
           ghcr.io/${{ github.repository_owner }}/builder-go
         tags: |
-          type=ref,event=branch,suffix=1.16
-          type=ref,event=pr,suffix=1.16
-          type=semver,pattern=v{{version}},suffix=1.16
+          type=ref,event=branch,suffix=-1.16
+          type=ref,event=pr,suffix=-1.16
+          type=semver,pattern=v{{version}},suffix=-1.16
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
     - name: Set up Docker Buildx
