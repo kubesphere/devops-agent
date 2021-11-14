@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - master
-    - refactor/*
     - test-* # make it be easier for contributors to test
     tags:
       - 'v*.*.*'
