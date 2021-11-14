@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - master
+    - refactor/*
     - test-* # make it be easier for contributors to test
     tags:
       - 'v*.*.*'
@@ -15,418 +16,137 @@ jobs:
   BuildBase:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
-    - name: Docker meta for KubeSphere
-      id: meta
-      if: github.repository_owner == 'kubesphere'
-      uses: docker/metadata-action@v3
-      with:
-        images: |
-          kubespheredev/builder-base
-          ghcr.io/${{ github.repository_owner }}/builder-base
-        tags: |
-          type=schedule
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern=v{{version}}-podman
-          type=sha
-    - name: Docker meta for Contributors
-      id: metaContributors
-      if: github.repository_owner != 'kubesphere'
-      uses: docker/metadata-action@v3
-      with:
-        images: |
-          ghcr.io/${{ github.repository_owner }}/builder-base
-        tags: |
-          type=schedule
-          type=ref,event=branch,suffix=-podman
-          type=ref,event=pr,suffix=-podman
-          type=semver,pattern=v{{version}}-podman
-          type=sha,suffix=-podman
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Login to DockerHub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USER }}
-        password: ${{ secrets.DOCKER_HUB_SECRETS }}
-    - name: Login to GHCR
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_TOKEN }}
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner == 'kubesphere'
-      with:
-        context: base
-        file: base/podman/Dockerfile
-        tags: ${{ steps.meta.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.meta.outputs.labels }}
-        platforms: linux/amd64
-    - name: Build and push Docker images for Contributors
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner != 'kubesphere'
-      with:
-        context: base
-        file: base/podman/Dockerfile
-        tags: ${{ steps.metaContributors.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.metaContributors.outputs.labels }}
-        platforms: linux/amd64
+      - uses: actions/checkout@v2
+      - name: Build base agent
+        uses: ./.github/actions/build
+        with:
+          context: base
+          dockerfile: base/podman/Dockerfile
+          image-name: builder-base
+          tag-suffix: -podman
+          platforms: linux/amd64
+          docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+          docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+          ghcr-token: ${{ secrets.GHCR_TOKEN }}
 
   BuildGo:
     needs: BuildBase
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
-    - name: Docker meta for KubeSphere
-      id: meta
-      if: github.repository_owner == 'kubesphere'
-      uses: docker/metadata-action@v3
-      with:
-        images: |
-          kubespheredev/builder-go
-          ghcr.io/${{ github.repository_owner }}/builder-go
-        tags: |
-          type=schedule
-          type=ref,event=branch,suffix=-podman
-          type=ref,event=pr,suffix=-podman
-          type=semver,pattern=v{{version}}-podman
-          type=sha,suffix=-podman
-    - name: Docker meta for Contributors
-      id: metaContributors
-      if: github.repository_owner != 'kubesphere'
-      uses: docker/metadata-action@v3
-      with:
-        images: |
-          ghcr.io/${{ github.repository_owner }}/builder-go
-        tags: |
-          type=schedule
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern=v{{version}}-podman
-          type=sha
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Login to DockerHub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USER }}
-        password: ${{ secrets.DOCKER_HUB_SECRETS }}
-    - name: Login to GHCR
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_TOKEN }}
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner == 'kubesphere'
+    - name: Build Go agent
+      uses: ./.github/actions/build
       with:
         context: go
-        file: go/podman/Dockerfile
-        tags: ${{ steps.meta.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.meta.outputs.labels }}
+        dockerfile: go/podman/Dockerfile
+        image-name: builder-go
+        tag-suffix: -podman
         platforms: linux/amd64
-    - name: Build and push Docker images for Contributors
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner != 'kubesphere'
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
+        build-args: "GOLANG_VERSION=1.12.10"
+
+  BuildGo16:
+    needs: BuildBase
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Go 1.16 agent
+      uses: ./.github/actions/build
       with:
         context: go
-        file: go/podman/Dockerfile
-        tags: ${{ steps.metaContributors.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.metaContributors.outputs.labels }}
+        dockerfile: go/podman/Dockerfile
+        image-name: builder-go
+        tag-suffix: -1.16-podman
         platforms: linux/amd64
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
+        build-args: "GOLANG_VERSION=1.16.8"
 
   BuildMaven:
     needs: BuildBase
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
-    - name: Docker meta for KubeSphere
-      id: meta
-      if: github.repository_owner == 'kubesphere'
-      uses: docker/metadata-action@v3
-      with:
-        images: |
-          kubespheredev/builder-maven
-          ghcr.io/${{ github.repository_owner }}/builder-maven
-        tags: |
-          type=schedule
-          type=ref,event=branch,suffix=-podman
-          type=ref,event=pr,suffix=-podman
-          type=semver,pattern=v{{version}}-podman
-          type=sha,suffix=-podman
-    - name: Docker meta for Contributors
-      id: metaContributors
-      if: github.repository_owner != 'kubesphere'
-      uses: docker/metadata-action@v3
-      with:
-        images: |
-          ghcr.io/${{ github.repository_owner }}/builder-maven
-        tags: |
-          type=schedule
-          type=ref,event=branch,suffix=-podman
-          type=ref,event=pr,suffix=-podman
-          type=semver,pattern=v{{version}}-podman
-          type=sha,suffix=-podman
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Login to DockerHub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USER }}
-        password: ${{ secrets.DOCKER_HUB_SECRETS }}
-    - name: Login to GHCR
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_TOKEN }}
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner == 'kubesphere'
+    - name: Build maven agent
+      uses: ./.github/actions/build
       with:
         context: maven
-        file: maven/podman/Dockerfile
-        tags: ${{ steps.meta.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.meta.outputs.labels }}
+        dockerfile: maven/podman/Dockerfile
+        image-name: builder-maven
+        tag-suffix: -podman
         platforms: linux/amd64
-    - name: Build and push Docker images for Contributors
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner != 'kubesphere'
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
+        build-args: "JDK_VERSION=1.8.0"
+  BuildMavenJDK11:
+    needs: BuildBase
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build maven(JDK11) agent
+      uses: ./.github/actions/build
       with:
         context: maven
-        file: maven/podman/Dockerfile
-        tags: ${{ steps.metaContributors.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.metaContributors.outputs.labels }}
+        dockerfile: maven/podman/Dockerfile
+        image-name: builder-maven
+        tag-suffix: -jdk11-podman
         platforms: linux/amd64
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
+        build-args: "JDK_VERSION=11"
 
   BuildGradle:
     needs: BuildBase
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Docker meta for KubeSphere
-        id: meta
-        if: github.repository_owner == 'kubesphere'
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            kubespheredev/builder-gradle
-            ghcr.io/${{ github.repository_owner }}/builder-gradle
-          tags: |
-            type=schedule
-            type=ref,event=branch,suffix=-podman
-            type=ref,event=pr,suffix=-podman
-            type=semver,pattern=v{{version}}-podman
-            type=sha,suffix=-podman
-      - name: Docker meta for Contributors
-        id: metaContributors
-        if: github.repository_owner != 'kubesphere'
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            ghcr.io/${{ github.repository_owner }}/builder-gradle
-          tags: |
-            type=schedule
-            type=ref,event=branch,suffix=-podman
-            type=ref,event=pr,suffix=-podman
-            type=semver,pattern=v{{version}}-podman
-            type=sha,suffix=-podman
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_SECRETS }}
-      - name: Login to GHCR
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2.4.0
-        if: github.repository_owner == 'kubesphere'
-        with:
-          context: gradle
-          file: gradle/podman/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }}
-          push: ${{ github.event_name != 'pull_request' }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
-      - name: Build and push Docker images for Contributors
-        uses: docker/build-push-action@v2.4.0
-        if: github.repository_owner != 'kubesphere'
-        with:
-          context: gradle
-          file: gradle/podman/Dockerfile
-          tags: ${{ steps.metaContributors.outputs.tags }}
-          push: ${{ github.event_name != 'pull_request' }}
-          labels: ${{ steps.metaContributors.outputs.labels }}
-          platforms: linux/amd64
-
-  BuildNodeJs:
-    needs: BuildBase
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
-    - name: Docker meta for KubeSphere
-      id: meta
-      if: github.repository_owner == 'kubesphere'
-      uses: docker/metadata-action@v3
+    - name: Build Gradle agent
+      uses: ./.github/actions/build
       with:
-        images: |
-          kubespheredev/builder-nodejs
-          ghcr.io/${{ github.repository_owner }}/builder-nodejs
-        tags: |
-          type=schedule
-          type=ref,event=branch,suffix=-podman
-          type=ref,event=pr,suffix=-podman
-          type=semver,pattern=v{{version}}-podman
-          type=sha,suffix=-podman
-    - name: Docker meta for Contributors
-      id: metaContributors
-      if: github.repository_owner != 'kubesphere'
-      uses: docker/metadata-action@v3
-      with:
-        images: |
-          ghcr.io/${{ github.repository_owner }}/builder-nodejs
-        tags: |
-          type=schedule
-          type=ref,event=branch,suffix=-podman
-          type=ref,event=pr,suffix=-podman
-          type=semver,pattern=v{{version}}-podman
-          type=sha,suffix=-podman
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: Login to DockerHub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_HUB_USER }}
-        password: ${{ secrets.DOCKER_HUB_SECRETS }}
-    - name: Login to GHCR
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_TOKEN }}
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner == 'kubesphere'
+        context: gradle
+        dockerfile: gradle/podman/Dockerfile
+        image-name: builder-gradle
+        tag-suffix: -podman
+        platforms: linux/amd64
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
+  
+  BuildNodeJs:
+    needs: BuildBase
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build NodeJS agent
+      uses: ./.github/actions/build
       with:
         context: nodejs
-        file: nodejs/podman/Dockerfile
-        tags: ${{ steps.meta.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.meta.outputs.labels }}
+        dockerfile: nodejs/podman/Dockerfile
+        image-name: builder-nodejs
+        tag-suffix: -podman
         platforms: linux/amd64
-    - name: Build and push Docker images for Contributors
-      uses: docker/build-push-action@v2.4.0
-      if: github.repository_owner != 'kubesphere'
-      with:
-        context: nodejs
-        file: nodejs/podman/Dockerfile
-        tags: ${{ steps.metaContributors.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
-        labels: ${{ steps.metaContributors.outputs.labels }}
-        platforms: linux/amd64
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
 
   BuildPython:
     needs: BuildBase
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Docker meta for KubeSphere
-        id: meta
-        if: github.repository_owner == 'kubesphere'
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            kubespheredev/builder-python
-            ghcr.io/${{ github.repository_owner }}/builder-python
-          tags: |
-            type=schedule
-            type=ref,event=branch,suffix=-podman
-            type=ref,event=pr,suffix=-podman
-            type=semver,pattern=v{{version}}-podman
-            type=sha,suffix=-podman
-      - name: Docker meta for Contributors
-        id: metaContributors
-        if: github.repository_owner != 'kubesphere'
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            ghcr.io/${{ github.repository_owner }}/builder-python
-          tags: |
-            type=schedule
-            type=ref,event=branch,suffix=-podman
-            type=ref,event=pr,suffix=-podman
-            type=semver,pattern=v{{version}}-podman
-            type=sha,suffix=-podman
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_SECRETS }}
-      - name: Login to GHCR
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v2.4.0
-        if: github.repository_owner == 'kubesphere'
-        with:
-          context: python
-          file: python/podman/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }}
-          push: ${{ github.event_name != 'pull_request' }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
-      - name: Build and push Docker images for Contributors
-        uses: docker/build-push-action@v2.4.0
-        if: github.repository_owner != 'kubesphere'
-        with:
-          context: python
-          file: python/podman/Dockerfile
-          tags: ${{ steps.metaContributors.outputs.tags }}
-          push: ${{ github.event_name != 'pull_request' }}
-          labels: ${{ steps.metaContributors.outputs.labels }}
-          platforms: linux/amd64
+    - uses: actions/checkout@v2
+    - name: Build Python agent
+      uses: ./.github/actions/build
+      with:
+        context: python
+        dockerfile: python/podman/Dockerfile
+        image-name: builder-python
+        tag-suffix: -podman
+        platforms: linux/amd64
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
