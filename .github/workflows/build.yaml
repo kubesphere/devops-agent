@@ -78,6 +78,7 @@ jobs:
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
         build-args: "JDK_VERSION=1.8.0"
+
   BuildMavenJDK11:
     needs: BuildBase
     runs-on: ubuntu-20.04
@@ -111,7 +112,7 @@ jobs:
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
-  
+
   BuildNodeJs:
     needs: BuildBase
     runs-on: ubuntu-20.04
