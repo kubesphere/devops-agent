@@ -1,0 +1,115 @@
+name: Build template
+description: "Template for docker build."
+
+inputs:
+  context:
+    description: Build context for docker.
+    required: true
+  dockerfile:
+    description: Dockerfile location.
+    required: true
+  image-name:
+    description: Docker image name.
+    required: true
+  tag-suffix:
+    description: Suffix of tag name.
+    required: true
+    default: ""
+  platforms:
+    description: Builder node platforms available (comma separated).
+    required: true
+    default: "linux/amd64"
+  build-args:
+    description: List of build-time variables.
+    required: false
+    default: ""
+  docker-registry:
+    description: Docker registry.
+    required: false
+    default: docker.io
+  docker-namespace:
+    description: Docker namespace.
+    required: false
+    default: ""
+  docker-password:
+    description: Password of current docker namespace in docker registry.
+    required: false
+    default: ""
+  ghcr-token:
+    description: Token of current GitHub account in GitHub container registry.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v2
+    - name: Docker meta for KubeSphere
+      id: meta
+      if: github.repository_owner == 'kubesphere'
+      uses: docker/metadata-action@v3
+      with:
+        images: |
+          kubespheredev/${{ inputs.image-name }}
+          ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name }}
+        tags: |
+          type=ref,event=branch,suffix=${{ inputs.tag-suffix }}
+          type=ref,event=pr,suffix=${{ inputs.tag-suffix }}
+          type=semver,pattern=v{{version}}${{ inputs.tag-suffix }}
+          type=semver,pattern=v{{major}}.{{minor}}${{ inputs.tag-suffix }}
+          type=semver,pattern=v{{major}}${{ inputs.tag-suffix }}
+          type=sha,suffix=${{ inputs.tag-suffix }}
+    - name: Docker meta for Contributors
+      id: metaContributors
+      if: github.repository_owner != 'kubesphere'
+      uses: docker/metadata-action@v3
+      with:
+        images: |
+          ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name }}
+        tags: |
+          type=ref,event=branch,suffix=${{ inputs.tag-suffix }}
+          type=ref,event=pr,suffix=${{ inputs.tag-suffix }}
+          type=semver,pattern=v{{version}}${{ inputs.tag-suffix }}
+          type=semver,pattern=v{{major}}.{{minor}}${{ inputs.tag-suffix }}
+          type=semver,pattern=v{{major}}${{ inputs.tag-suffix }}
+          type=sha,suffix=${{ inputs.tag-suffix }}
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Login to DockerHub
+      if: github.event_name != 'pull_request' && github.repository_owner == 'kubesphere'
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ inputs.docker-registry }}
+        username: ${{ inputs.docker-namespace }}
+        password: ${{ inputs.docker-password }}
+    - name: Login to GHCR
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ inputs.ghcr-token }}
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v2
+      if: github.repository_owner == 'kubesphere'
+      with:
+        context: ${{ inputs.context }}
+        file: ${{ inputs.dockerfile }}
+        tags: ${{ steps.meta.outputs.tags }}
+        push: ${{ github.event_name != 'pull_request' }}
+        labels: ${{ steps.meta.outputs.labels }}
+        platforms: ${{ inputs.platforms }}
+        build-args: ${{ inputs.build-args }}
+    - name: Build and push Docker images for Contributors
+      uses: docker/build-push-action@v2
+      if: github.repository_owner != 'kubesphere'
+      with:
+        context: ${{ inputs.context }}
+        file: ${{ inputs.dockerfile }}
+        tags: ${{ steps.metaContributors.outputs.tags }}
+        push: ${{ github.event_name != 'pull_request' }}
+        labels: ${{ steps.metaContributors.outputs.labels }}
+        platforms: ${{ inputs.platforms }}
+        build-args: ${{ inputs.build-args }}
