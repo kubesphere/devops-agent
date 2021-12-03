@@ -53,11 +53,10 @@ runs:
           kubespheredev/${{ inputs.image-name }}
           ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name }}
         tags: |
+          type=schedule
           type=ref,event=branch,suffix=${{ inputs.tag-suffix }}
           type=ref,event=pr,suffix=${{ inputs.tag-suffix }}
-          type=semver,pattern=v{{version}}${{ inputs.tag-suffix }}
-          type=semver,pattern=v{{major}}.{{minor}}${{ inputs.tag-suffix }}
-          type=semver,pattern=v{{major}}${{ inputs.tag-suffix }}
+          type=semver,pattern={{raw}}${{ inputs.tag-suffix }}
           type=sha,suffix=${{ inputs.tag-suffix }}
     - name: Docker meta for Contributors
       id: metaContributors
@@ -67,11 +66,10 @@ runs:
         images: |
           ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name }}
         tags: |
+          type=schedule
           type=ref,event=branch,suffix=${{ inputs.tag-suffix }}
           type=ref,event=pr,suffix=${{ inputs.tag-suffix }}
-          type=semver,pattern=v{{version}}${{ inputs.tag-suffix }}
-          type=semver,pattern=v{{major}}.{{minor}}${{ inputs.tag-suffix }}
-          type=semver,pattern=v{{major}}${{ inputs.tag-suffix }}
+          type=semver,pattern={{raw}}${{ inputs.tag-suffix }}
           type=sha,suffix=${{ inputs.tag-suffix }}
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
@@ -91,6 +89,21 @@ runs:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ inputs.ghcr-token }}
+    - name: Build env
+      id: build_env
+      shell: bash
+      run: |
+        if [ "${{ github.event_name }}" == "pull_request" ]
+        then
+            echo "::set-output name=platforms::linux/amd64"
+            echo "::set-output name=push::false"
+            echo "::set-output name=load::true"
+        else
+            echo "::set-output name=platforms::linux/amd64,linux/arm64"
+            echo "::set-output name=push::true"
+            echo "::set-output name=load::false"
+        fi
+        echo "::set-output name=short_sha::${GITHUB_SHA::7}"
     - name: Build and push Docker images
       uses: docker/build-push-action@v2
       if: github.repository_owner == 'kubesphere'
@@ -98,18 +111,28 @@ runs:
         context: ${{ inputs.context }}
         file: ${{ inputs.dockerfile }}
         tags: ${{ steps.meta.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
+        push: ${{ steps.build_env.outputs.push }}
+        load: ${{ steps.build_env.outputs.load }}
         labels: ${{ steps.meta.outputs.labels }}
-        platforms: ${{ inputs.platforms }}
-        build-args: ${{ inputs.build-args }}
+        platforms: ${{ steps.build_env.outputs.platforms }}
     - name: Build and push Docker images for Contributors
       uses: docker/build-push-action@v2
       if: github.repository_owner != 'kubesphere'
       with:
         context: ${{ inputs.context }}
         file: ${{ inputs.dockerfile }}
-        tags: ${{ steps.metaContributors.outputs.tags }}
-        push: ${{ github.event_name != 'pull_request' }}
+        push: ${{ steps.build_env.outputs.push }}
+        load: ${{ steps.build_env.outputs.load }}
         labels: ${{ steps.metaContributors.outputs.labels }}
-        platforms: ${{ inputs.platforms }}
+        platforms: ${{ steps.build_env.outputs.platforms }}
         build-args: ${{ inputs.build-args }}
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@0.2.0
+      if: github.event_name == 'pull_request'
+      with:
+        image-ref: 'ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name }}:sha-${{ steps.build_env.outputs.short_sha }}'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
