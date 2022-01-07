@@ -59,7 +59,8 @@ RUN ./hack/install_utils.sh && rm -rf ./*
 # Install podman
 RUN curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/devel:kubic:libcontainers:stable.repo && \
     yum -y install podman fuse-overlayfs && \
-    echo "alias docker=podman" >> /root/.bashrc
+    echo "alias docker=podman" >> /root/.bashrc && \
+    yum -y clean all --enablerepo='*'
 
 COPY storage.conf /etc/containers/storage.conf
 COPY containers.conf /etc/containers/containers.conf
