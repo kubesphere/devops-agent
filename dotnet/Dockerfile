@@ -6,9 +6,9 @@ RUN wget https://dot.net/v1/dotnet-install.sh
 
 RUN chmod a+x dotnet-install.sh
 
-RUN sh dotnet-install.sh -c 5.0 --install-dir /usr/share/dotnet5
+RUN sh dotnet-install.sh -c 6.0 --install-dir /usr/share/dotnet6
 
-RUN ln -s /usr/share/dotnet5/dotnet /usr/bin/dotnet
+RUN ln -s /usr/share/dotnet6/dotnet /usr/bin/dotnet
 
 ENV PATH $PATH:/root/.nuget/tools:/root/.dotnet/tools
 
