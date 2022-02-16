@@ -1,7 +1,9 @@
 FROM kubespheredev/builder-base:v3.1.0-podman
 
+ARG JDK_VERSION 1.8.0
+
 # java
-ENV JAVA_VERSIOIN 1.8.0
+ENV JAVA_VERSIOIN $JDK_VERSION
 RUN yum install -y java-${JAVA_VERSIOIN}-openjdk-devel \
     java-${JAVA_VERSIOIN}-openjdk-devel.i686
 
