@@ -35,7 +35,8 @@ RUN ARCH= && uArch="$(uname -m)" \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
   && yum install -y nodejs gcc-c++ make bzip2 GConf2 gtk2 chromedriver chromium xorg-x11-server-Xvfb
 
-RUN npm i -g watch-cli vsce typescript
+RUN npm -g config set user root \
+  &&npm i -g watch-cli vsce typescript
 
 # Yarn
 ENV YARN_VERSION 1.16.0
