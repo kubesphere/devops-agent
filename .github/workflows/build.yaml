@@ -123,10 +123,11 @@ jobs:
         context: nodejs
         dockerfile: nodejs/Dockerfile
         image-name: builder-nodejs
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
+        build-args: "NODE_VERSION=10.16.3"
 
   BuildNodeJs14:
     needs: BuildBase
@@ -182,7 +183,7 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         push: ${{ github.event_name != 'pull_request' }}
         labels: ${{ steps.meta.outputs.labels }}
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         build-args: "NODE_VERSION=14.17.6"
     - name: Build and push Docker images for Contributors
       uses: docker/build-push-action@v2.4.0
@@ -193,7 +194,7 @@ jobs:
         tags: ${{ steps.metaContributors.outputs.tags }}
         push: ${{ github.event_name != 'pull_request' }}
         labels: ${{ steps.metaContributors.outputs.labels }}
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         build-args: "NODE_VERSION=14.17.6"
 
   BuildDotnet:
