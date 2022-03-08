@@ -65,3 +65,17 @@ else
   echo "do not support this arch"
   exit 1
 fi
+
+# ks
+
+if [[ ${ARCH} == 'x86_64' ]]; then
+  curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.62/ks-linux-amd64.tar.gz | tar xzv && \
+  mv ks /usr/bin/
+elif [[ ${ARCH} == 'aarch64' ]]
+then
+  curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.62/ks-linux-arm64.tar.gz | tar xzv && \
+  mv ks /usr/bin/
+else
+  echo "do not support this arch"
+  exit 1
+fi
