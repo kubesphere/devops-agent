@@ -79,3 +79,17 @@ else
   echo "do not support this arch"
   exit 1
 fi
+
+# kustomize
+KUSTOMIZE_VERSION=4.5.3
+if [[ ${ARCH} == 'x86_64' ]]; then
+  curl -fL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz | tar xzv && \
+  mv kustomize /usr/bin/
+elif [[ ${ARCH} == 'aarch64' ]]
+then
+  curl -fL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_arm64.tar.gz | tar xzv && \
+  mv kustomize /usr/bin/
+else
+  echo "do not support this arch"
+  exit 1
+fi
