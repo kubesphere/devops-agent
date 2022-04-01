@@ -67,7 +67,7 @@ else
 fi
 
 # ks
-KS_VERSION=v0.0.63
+KS_VERSION=v0.0.64
 if [[ ${ARCH} == 'x86_64' ]]; then
   curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v${KS_VERSION}/ks-linux-amd64.tar.gz | tar xzv && \
   mv ks /usr/bin/
