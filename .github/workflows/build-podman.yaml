@@ -45,7 +45,6 @@ jobs:
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
         build-args: "GOLANG_VERSION=1.12.10"
-
   BuildGo16:
     needs: BuildBase
     runs-on: ubuntu-20.04
@@ -63,6 +62,40 @@ jobs:
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
         build-args: "GOLANG_VERSION=1.16.8"
+  BuildGo17:
+    needs: BuildBase
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Go 1.17 agent
+      uses: ./.github/actions/build
+      with:
+        context: go
+        dockerfile: go/podman/Dockerfile
+        image-name: builder-go
+        tag-suffix: -1.17-podman
+        platforms: linux/amd64
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
+        build-args: "GOLANG_VERSION=1.17.8"
+  BuildGo18:
+    needs: BuildBase
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Go 1.18 agent
+      uses: ./.github/actions/build
+      with:
+        context: go
+        dockerfile: go/podman/Dockerfile
+        image-name: builder-go
+        tag-suffix: -1.18-podman
+        platforms: linux/amd64
+        docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+        docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+        ghcr-token: ${{ secrets.GHCR_TOKEN }}
+        build-args: "GOLANG_VERSION=1.18"
 
   BuildMaven:
     needs: BuildBase
