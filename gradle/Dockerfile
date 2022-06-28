@@ -1,7 +1,7 @@
 FROM kubespheredev/builder-base:v3.1.0
 
 # java
-ARG JAVA_VERSIOIN 17.0.1
+ARG JAVA_VERSIOIN=17.0.1
 SHELL ["/bin/bash", "-c"]
 ENV BASH_ENV ~/.bashrc
 ENV JAVA_HOME /usr/local/jdk-${JAVA_VERSIOIN}
@@ -31,7 +31,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \   
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "11.0.1" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -43,7 +43,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \ 
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "11.0.2" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -55,7 +55,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \          
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "12" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -91,7 +91,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \  
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "13" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -127,7 +127,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \          
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "14" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -163,7 +163,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \     
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "15" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -199,7 +199,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \    
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "16" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -211,7 +211,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \    
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "16.0.1" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -223,7 +223,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \  
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "16.0.2" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -235,7 +235,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \                 
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "17" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -247,7 +247,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \    
+    && source ~/.bashrc ; \
   elif [ "$JAVA_VERSIOIN" == "17.0.1" ]; \
   then \
     yum -y remove java-1.8.0-openjdk \
@@ -271,7 +271,7 @@ RUN \
     && echo "export PATH=\"/usr/local/jdk-${JAVA_VERSIOIN}/bin:$PATH\"" >> ~/.bashrc \
     && echo "export JAVA_HOME PATH " >> ~/.bashrc  \
     && cat ~/.bashrc  \
-    && source ~/.bashrc ; \    
+    && source ~/.bashrc ; \
   else \
     yum -y remove java-1.8.0-openjdk \
     && curl -fSL https://download.java.net/java/GA/jdk${JAVA_VERSIOIN}/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-${JAVA_VERSIOIN}_linux-x64_bin.tar.gz -o openjdk.tar.gz \
@@ -289,7 +289,7 @@ RUN \
     && javac -version
 
 # gradle
-ARG GRADLE_VERSION 7.4.2
+ARG GRADLE_VERSION=7.4.2
 ENV GRADLE_HOME /usr/local/gradle-${GRADLE_VERSION}
 ENV PATH ${GRADLE_HOME}/bin:$PATH
 
