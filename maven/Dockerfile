@@ -290,12 +290,22 @@ RUN \
 
 # maven
 ARG MAVEN_VERSION=3.5.3
-RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -C /opt -xzv
 ENV M2_HOME /opt/apache-maven-$MAVEN_VERSION
-ENV JAVA_HOME /usr/lib/jvm/java-${JAVA_VERSIOIN}-openjdk
+ENV JAVA_HOME /usr/local/jdk-${JAVA_VERSIOIN}
 ENV maven.home $M2_HOME
 ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH:JAVA_HOME/bin
+RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -C /opt -xzv  \
+    && rm -f gradle.zip  \
+    && echo "export M2_HOME=/opt/apache-maven-${MAVEN_VERSION}" >> ~/.bashrc  \
+    && echo "export MAVEN_HOME=${M2_HOME}" >> ~/.bashrc  \
+    && echo "export M2=${M2_HOME}/bin" >> ~/.bashrc  \
+    && echo "export PATH=\"$M2:$PATH:JAVA_HOME/bin\"" >> ~/.bashrc  \
+    && echo "export M2_HOME MAVEN_HOME M2 PATH " >> ~/.bashrc  \
+    && cat ~/.bashrc  \
+    && source ~/.bashrc \
+    && ls -l /opt \
+    && mvn -v
 
 # ant
 ENV ANT_VERSION 1.10.7

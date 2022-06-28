@@ -61,3 +61,21 @@ It's a better way to provide jenkinsfile for compiling images, like base agent.
 - Mailing list [archive](https://groups.google.com/group/kubesphere-sig-devops/topics) | [subscribe](mailto:kubesphere-sig-devops+subscribe@googlegroups.com) | [unsubscribe](mailto:kubesphere-sig-devops+unsubscribe@googlegroups.com)
 - [Medium (Blog)](https://itnext.io/@kubesphere)
 
+## build maven
+
+```shell
+docker build -t test --build-arg JAVA_VERSIOIN=1.8.0 --build-arg MAVEN_VERSION=3.8.6 .
+```
+
+## build gradle image
+
+```shell
+ docker build -t gradle --build-arg JAVA_VERSIOIN=1.8.0 --build-arg GRADLE_VERSION=7.4.1 .
+```
+
+## build volta image
+
+```
+docker build -t volta --build-arg VERSION=1.0.7
+
+```
