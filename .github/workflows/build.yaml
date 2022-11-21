@@ -128,6 +128,25 @@ jobs:
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
         build-args: "JDK_VERSION=11"
+  BuildMavenJDK17:
+    needs: BuildBase
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build maven(JDK17) agent
+        uses: ./.github/actions/build
+        with:
+          context: maven
+          dockerfile: maven/Dockerfile
+          image-name: builder-maven
+          tag-suffix: -jdk17
+          platforms: linux/amd64,linux/arm64
+          docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+          docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+          ghcr-token: ${{ secrets.GHCR_TOKEN }}
+          build-args: |
+            "JDK_VERSION=17"
+            "JDK_HOME=/usr/java/default"
 
   BuildGradle:
     needs: BuildBase
@@ -144,7 +163,7 @@ jobs:
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
-  
+
   BuildNodeJs:
     needs: BuildBase
     runs-on: ubuntu-20.04
