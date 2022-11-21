@@ -11,5 +11,20 @@ build-maven-podman:
 push-maven-podman:
 	docker push kubespheredev/builder-maven:$(VERSION)-podman
 
-build-jdk11:
-	docker build maven -f maven/Dockerfile -t kubespheredev/builder-maven:$(VERSION)-jdk11 --build-arg JDK_VERSION=11
+build-maven-jdk11:
+	docker build maven -f maven/Dockerfile -t kubespheredev/builder-maven:$(VERSION)-jdk11 \
+--build-arg JDK_VERSION=11
+push-maven-jdk11:
+	docker push kubespheredev/builder-maven:$(VERSION)-jdk11
+
+build-maven-jdk17:
+	docker build maven -f maven/Dockerfile -t kubespheredev/builder-maven:$(VERSION)-jdk17 \
+--build-arg JDK_VERSION=17 --build-arg JDK_HOME=/usr/java/default
+push-maven-jdk17:
+	docker push kubespheredev/builder-maven:$(VERSION)-jdk17
+
+build-maven-jdk17-podman:
+	docker build maven -f maven/podman/Dockerfile -t kubespheredev/builder-maven:$(VERSION)-jdk17-podman \
+--build-arg JDK_VERSION=17 --build-arg JDK_HOME=/usr/java/default
+push-maven-jdk17-podman:
+	docker push kubespheredev/builder-maven:$(VERSION)-jdk17-podman
