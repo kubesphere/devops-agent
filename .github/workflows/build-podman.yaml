@@ -23,7 +23,7 @@ jobs:
           dockerfile: base/podman/Dockerfile
           image-name: builder-base
           tag-suffix: -podman
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
           docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
           ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -40,7 +40,7 @@ jobs:
         dockerfile: go/podman/Dockerfile
         image-name: builder-go
         tag-suffix: -podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -57,7 +57,7 @@ jobs:
         dockerfile: go/podman/Dockerfile
         image-name: builder-go
         tag-suffix: -1.16-podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
         dockerfile: go/podman/Dockerfile
         image-name: builder-go
         tag-suffix: -1.17-podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -91,7 +91,7 @@ jobs:
         dockerfile: go/podman/Dockerfile
         image-name: builder-go
         tag-suffix: -1.18-podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -109,7 +109,7 @@ jobs:
         dockerfile: maven/podman/Dockerfile
         image-name: builder-maven
         tag-suffix: -podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -126,7 +126,7 @@ jobs:
         dockerfile: maven/podman/Dockerfile
         image-name: builder-maven
         tag-suffix: -jdk11-podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -144,7 +144,7 @@ jobs:
           dockerfile: maven/podman/Dockerfile
           image-name: builder-maven
           tag-suffix: -jdk17-podman
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
           docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
           ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -164,7 +164,7 @@ jobs:
         dockerfile: gradle/podman/Dockerfile
         image-name: builder-gradle
         tag-suffix: -podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -181,7 +181,7 @@ jobs:
         dockerfile: nodejs/podman/Dockerfile
         image-name: builder-nodejs
         tag-suffix: -podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
@@ -198,7 +198,7 @@ jobs:
         dockerfile: python/podman/Dockerfile
         image-name: builder-python
         tag-suffix: -podman
-        platforms: linux/amd64
+        platforms: linux/amd64,linux/arm64
         docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
         docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
         ghcr-token: ${{ secrets.GHCR_TOKEN }}
