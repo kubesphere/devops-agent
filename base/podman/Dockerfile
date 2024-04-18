@@ -17,12 +17,20 @@ RUN yum install -y epel-release ca-certificates && \
   openssl-devel \
   perl-devel \
   zlib-devel \
+  systemd-devel \
+  gpgme-devel \
+  btrfs-progs-devel \
+  libassuan-devel \
+  device-mapper-devel \
+  libseccomp-devel \
+  go \
+  go-md2man \
   python-pip \
   java-1.8.0-openjdk && \
   yum -y clean all --enablerepo='*'
 
 RUN wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.9.5.tar.gz && \
-    tar zxvf git-2.9.5.tar.gz --no-same-owner && \
+    tar zxf git-2.9.5.tar.gz --no-same-owner && \
     cd git-2.9.5 && \
     make configure && \
     ./configure prefix=/usr/local/git/ && \
@@ -54,13 +62,10 @@ ENV PATH $PATH:/usr/bin/sonar-scanner-$SONAR_SCANNER_VERSION-linux/bin
 COPY ./ ./
 
 ENV EXCLUDE_DOCKER 1
-RUN ./hack/install_utils.sh && rm -rf ./*
+RUN ./hack/install_utils.sh
 
 # Install podman
-RUN curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/devel:kubic:libcontainers:stable.repo && \
-    yum -y install podman fuse-overlayfs && \
-    ln -s /usr/bin/podman /usr/bin/docker && \
-    yum -y clean all --enablerepo='*'
+RUN ./hack/install_podman.sh && rm -rf ./*
 
 COPY storage.conf /etc/containers/storage.conf
 COPY containers.conf /etc/containers/containers.conf
