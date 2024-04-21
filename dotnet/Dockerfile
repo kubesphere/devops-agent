@@ -1,4 +1,4 @@
-FROM kubespheredev/builder-base:v3.1.0
+FROM kubespheredev/builder-base:v3.3.2
 
 RUN yum install -y krb5-libs libicu openssl-libs compat-openssl10 libgdiplus libstdc++-devel devtoolset-7-gcc devtoolset-7-gcc-c++ devtoolset-7-binutils
 

@@ -1,4 +1,4 @@
-FROM kubespheredev/builder-base:v3.1.0-podman
+FROM kubespheredev/builder-base:v3.3.2-podman
 
 RUN yum -y groupinstall 'Development Tools'  && yum -y clean all --enablerepo='*'
 

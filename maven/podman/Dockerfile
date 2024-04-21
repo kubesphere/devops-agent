@@ -1,4 +1,4 @@
-FROM kubespheredev/builder-base:v3.1.0-podman
+FROM kubespheredev/builder-base:v3.3.2-podman
 
 ARG JDK_VERSION 1.8.0
 ARG JDK_HOME /usr/lib/jvm/java-${JDK_VERSION}-openjdk
