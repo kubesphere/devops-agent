@@ -1,15 +1,10 @@
-FROM kubespheredev/builder-base:v3.1.0
+FROM kubespheredev/builder-base:v4.1.0
 
-RUN yum install -y krb5-libs libicu openssl-libs compat-openssl10 libgdiplus libstdc++-devel devtoolset-7-gcc devtoolset-7-gcc-c++ devtoolset-7-binutils
+ENV DOTNETSDK_VERSION dotnet-sdk-8.0
 
-RUN wget https://dot.net/v1/dotnet-install.sh
-
-RUN chmod a+x dotnet-install.sh
-
-RUN sh dotnet-install.sh -c 5.0 --install-dir /usr/share/dotnet5
-
-RUN ln -s /usr/share/dotnet5/dotnet /usr/bin/dotnet
-
-ENV PATH $PATH:/root/.nuget/tools:/root/.dotnet/tools
+# install dotnet-sdk
+RUN apt-get install ca-certificates libc6 libgcc-s1 libgssapi-krb5-2 libicu70 liblttng-ust1 libssl3 libstdc++6 libunwind8 zlib1g -y  && \
+    apt-get install $DOTNETSDK_VERSION -y  && \
+    dotnet --version && dotnet --info
 
 CMD ["dotnet", "--version"]
