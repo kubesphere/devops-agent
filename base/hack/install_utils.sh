@@ -7,7 +7,7 @@ echo $ARCH
 rm -rf /usr/bin/ks
 
 # ks
-KS_VERSION=0.0.72
+KS_VERSION=0.0.73
 if [[ ${ARCH} == 'x86_64' ]]; then
   curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v${KS_VERSION}/ks-linux-amd64.tar.gz | tar xzv && \
   mv ks /usr/bin/
