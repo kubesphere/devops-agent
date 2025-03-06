@@ -1,4 +1,4 @@
-FROM kubesphere/builder-base:v3.3.1-podman
+FROM kubespheredev/builder-base:v3.3.1-podman
 
 WORKDIR /home/jenkins
 
