@@ -1,4 +1,4 @@
-FROM kubespheredev/builder-base:v3.2.2
+FROM kubespheredev/builder-base:v3.3.1
 
 WORKDIR /home/jenkins
 

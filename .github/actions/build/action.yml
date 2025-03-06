@@ -50,7 +50,7 @@ runs:
       uses: docker/metadata-action@v3.7.0
       with:
         images: |
-          kubespheredev/${{ inputs.image-name }}
+          kubesphere/${{ inputs.image-name }}
         tags: |
           type=ref,event=branch,suffix=${{ inputs.tag-suffix }}
           type=ref,event=pr,suffix=${{ inputs.tag-suffix }}
