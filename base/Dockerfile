@@ -139,8 +139,7 @@ RUN echo node > .nvmrc
 
 # Download and install Node.js
 RUN nvm install 22
-RUN npm -g config set user root
-RUN npm i -g watch-cli vsce typescript
+RUN npm install --global watch-cli vsce typescript
 
 # Install Yarn
 RUN npm install --global yarn
