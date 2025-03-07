@@ -1,5 +1,6 @@
 FROM ubuntu:24.04
 
+# Set working directory
 WORKDIR /root
 
 # Set PATH
@@ -103,9 +104,9 @@ RUN add-apt-repository ppa:longsleep/golang-backports && \
     apt-get install -y golang-go
 
 # Settings for golang
-ENV GOROOT=/usr/local/go
-ENV GOPATH=/home/jenkins/go
-ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+ENV GOROOT=$(go env GOROOT)
+ENV GOPATH=$(go env GOPATH)
+ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
 
 # Install sdkman
