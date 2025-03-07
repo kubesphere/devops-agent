@@ -8,8 +8,6 @@ ENV PATH $PATH:/usr/local:/usr/local/bin
 
 # Set Bash as the default shell
 RUN chsh -s /bin/bash
-
-# Set Bash as the default shell
 SHELL ["/bin/bash", "-c"]
 
 # Install utils
@@ -173,10 +171,11 @@ RUN docker --version && \
     yarn --version && \
     python --version && \
     pip --version && \
-    kustomize version \
+    kustomize version
 
 # Clean up
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /home/jenkins
