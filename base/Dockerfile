@@ -162,7 +162,7 @@ RUN docker --version && \
     podman --version && \
     java --version && \
     helm version && \
-    kubectl version --client --short && \
+    kubectl version --client && \
     ks version && \
     sonar-scanner --version && \
     dotnet --version && \
