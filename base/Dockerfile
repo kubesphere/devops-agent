@@ -92,13 +92,6 @@ RUN arch=$(dpkg --print-architecture) && \
 RUN curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.73/ks-linux-$(dpkg --print-architecture).tar.gz | tar xzv && \
     mv ks /usr/local/bin/
 
-# Install .NET
-RUN add-apt-repository ppa:dotnet/backports && \
-    apt-get update && \
-    apt-get install -y dotnet-sdk-9.0
-
-ENV PATH=$PATH:/root/.nuget/tools:/root/.dotnet/tools
-
 # Install golang
 RUN add-apt-repository ppa:longsleep/golang-backports && \
     apt-get update && \
@@ -145,6 +138,13 @@ RUN npm i -g watch-cli vsce typescript
 
 # Install Yarn
 RUN npm install --global yarn
+
+# Install .NET
+RUN add-apt-repository ppa:dotnet/backports && \
+    apt-get update && \
+    apt-get install -y dotnet-sdk-9.0
+
+ENV PATH=$PATH:/root/.nuget/tools:/root/.dotnet/tools
 
 # Settings for podman
 RUN mkdir -p /etc/containers
