@@ -6,6 +6,9 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 ENV PATH $PATH:/usr/local:/usr/local/bin
 
+# Set Bash as the default shell
+RUN chsh -s /bin/bash
+
 # Install utils
 RUN apt-get update && \
     apt-get install -y \
@@ -35,9 +38,8 @@ RUN apt-get update && \
     python3 \
     python3-pip \
     podman \
-    openjdk-21-jdk && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    software-properties-common \
+    openjdk-21-jdk
 
 ## Settings for Java
 ENV JDK_HOME $(dirname $(dirname $(readlink -f $(which java))))
@@ -55,9 +57,7 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
     tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && \
-    apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin
 
 # Install helm
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
@@ -171,6 +171,10 @@ RUN docker --version && \
     python --version && \
     pip --version && \
     kustomize version \
+
+# Clean up
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /home/jenkins
