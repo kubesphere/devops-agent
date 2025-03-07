@@ -1,5 +1,7 @@
 FROM ubuntu:24.04
 
+WORKDIR /root
+
 # Set PATH
 ENV PATH=$PATH:/usr/local:/usr/local/bin
 
@@ -7,7 +9,10 @@ ENV PATH=$PATH:/usr/local:/usr/local/bin
 RUN chsh -s /bin/bash
 SHELL ["/bin/bash", "-c"]
 
-WORKDIR /root
+# Create a script file sourced by both interactive and non-interactive bash shells
+ENV BASH_ENV=/root/.bash_env
+RUN touch "${BASH_ENV}"
+RUN echo '. "${BASH_ENV}"' >> /root/.bashrc
 
 # Install utils
 RUN apt-get update && \
@@ -129,7 +134,8 @@ ENV ANT_HOME=/opt/ant
 ENV PATH=${PATH}:${ANT_HOME}/bin
 
 # Install nvm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | PROFILE="${BASH_ENV}" bash
+RUN echo node > .nvmrc
 
 # Download and install Node.js
 RUN nvm install 22
