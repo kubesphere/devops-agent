@@ -104,8 +104,8 @@ RUN add-apt-repository ppa:longsleep/golang-backports && \
     apt-get install -y golang-go
 
 # Settings for golang
-ENV GOROOT=$(go env GOROOT)
-ENV GOPATH=$(go env GOPATH)
+ENV GOROOT="$(go env GOROOT)"
+ENV GOPATH="$(go env GOPATH)"
 ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
 
