@@ -9,6 +9,9 @@ ENV PATH $PATH:/usr/local:/usr/local/bin
 # Set Bash as the default shell
 RUN chsh -s /bin/bash
 
+# Set Bash as the default shell
+SHELL ["/bin/bash", "-c"]
+
 # Install utils
 RUN apt-get update && \
     apt-get install -y \
