@@ -1,2 +1,2 @@
-Base image with docker and podman
+Base image with common sdks and utilities
 

@@ -4,9 +4,9 @@ FROM ubuntu:24.04
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-ENV PATH $PATH:/usr/local/bin
+ENV PATH $PATH:/usr/local:/usr/local/bin
 
-# Install additional utils not included by default
+# Install utils
 RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
@@ -32,11 +32,19 @@ RUN apt-get update && \
     libssl-dev \
     libperl-dev \
     zlib1g-dev \
+    python3 \
     python3-pip \
     podman \
     openjdk-21-jdk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+## Settings for Java
+ENV JDK_HOME $(dirname $(dirname $(readlink -f $(which java))))
+ENV JAVA_HOME $JDK_HOME
+
+# Settings for python
+RUN ln -fs $(which python3) /usr/bin/python && ln -fs $(which pip3) /usr/bin/pip
 
 # Install docker CLI
 RUN install -m 0755 -d /etc/apt/keyrings && \
@@ -65,10 +73,8 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 # Install kustomize
 RUN curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
-# Set up Sonar Scanner
-ENV SONAR_SCANNER_VERSION 7.0.2.4839
-
 # Install Sonar Scanner CLI
+ENV SONAR_SCANNER_VERSION 7.0.2.4839
 RUN arch=$(dpkg --print-architecture) && \
     if [ $arch = "amd64" ]; then \
       TARGET_ARCH=linux-x64; \
@@ -86,11 +92,85 @@ RUN arch=$(dpkg --print-architecture) && \
 RUN curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.73/ks-linux-$(dpkg --print-architecture).tar.gz | tar xzv && \
     mv ks /usr/local/bin/
 
+# Install .NET
+RUN add-apt-repository ppa:dotnet/backports && \
+    apt-get update && \
+    apt-get install -y dotnet-sdk-9.0
 
+ENV PATH $PATH:/root/.nuget/tools:/root/.dotnet/tools
+
+# Install golang
+RUN add-apt-repository ppa:longsleep/golang-backports && \
+    apt-get update && \
+    apt-get install -y golang-go
+
+# Settings for golang
+ENV GOROOT /usr/local/go
+ENV GOPATH /home/jenkins/go
+ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
+RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
+
+# Install sdkman
+RUN curl -s "https://get.sdkman.io" | bash
+
+# Install gradle
+ENV GRADLE_VERSION 8.13
+RUN sdk install gradle ${GRADLE_VERSION}
+
+# Install Maven
+ENV MAVEN_VERSION 3.9.9
+RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -C /opt -xzv
+ENV M2_HOME /opt/apache-maven-$MAVEN_VERSION
+ENV maven.home $M2_HOME
+ENV M2 $M2_HOME/bin
+ENV PATH $PATH:$M2:${JAVA_HOME}/bin
+
+# Install ant
+ENV ANT_VERSION 1.10.15
+RUN wget -q https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    tar -xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    mv apache-ant-${ANT_VERSION} /opt/ant && \
+    rm apache-ant-${ANT_VERSION}-bin.tar.gz
+ENV ANT_HOME /opt/ant
+ENV PATH ${PATH}:${ANT_HOME}/bin
+
+# Install nvm
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+# Download and install Node.js
+RUN nvm install 22
+RUN npm -g config set user root
+RUN npm i -g watch-cli vsce typescript
+
+# Install Yarn
+RUN npm install --global yarn
+
+# Settings for podman
 RUN mkdir -p /etc/containers
 COPY *.conf /etc/containers/
-
 VOLUME /var/lib/containers
+
+# Verify installations
+RUN docker --version && \
+    podman --version && \
+    java --version && \
+    helm version && \
+    kubectl version --client --short && \
+    ks version && \
+    sonar-scanner --version && \
+    dotnet --version && \
+    go version && \
+    gradle --version && \
+    mvn --version && \
+    ant --version && \
+    nvm --version && \
+    nvm current && \
+    npm --version && \
+    node --version && \
+    yarn --version && \
+    python --version && \
+    pip --version && \
+    kustomize version \
 
 # Set working directory
 WORKDIR /home/jenkins
