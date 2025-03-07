@@ -86,7 +86,7 @@ RUN arch=$(dpkg --print-architecture) && \
     wget -O sonar_scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-${TARGET_ARCH}.zip && \
     unzip sonar_scanner.zip -d /opt && \
     rm sonar_scanner.zip && \
-    ln -s /opt/sonar-scanner-$SONAR_SCANNER_VERSION-${TARGET_ARCH}/bin/sonar-scanner /usr/local/bin/sonar-scanner
+    ln -s /opt/sonar-scanner-${SONAR_SCANNER_VERSION}-${TARGET_ARCH}/bin/sonar-scanner /usr/local/bin/sonar-scanner
 
 # Install ks (Kubesphere CLI)
 RUN curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.73/ks-linux-$(dpkg --print-architecture).tar.gz | tar xzv && \
@@ -173,8 +173,7 @@ RUN docker --version && \
     kustomize version \
 
 # Clean up
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /home/jenkins
