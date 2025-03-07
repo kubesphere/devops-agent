@@ -1,14 +1,13 @@
 FROM ubuntu:24.04
 
-# Set the locale(en_US.UTF-8)
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-ENV PATH $PATH:/usr/local:/usr/local/bin
+# Set PATH
+ENV PATH=$PATH:/usr/local:/usr/local/bin
 
 # Set Bash as the default shell
 RUN chsh -s /bin/bash
 SHELL ["/bin/bash", "-c"]
+
+WORKDIR /root
 
 # Install utils
 RUN apt-get update && \
@@ -43,8 +42,8 @@ RUN apt-get update && \
     openjdk-21-jdk
 
 ## Settings for Java
-ENV JDK_HOME $(dirname $(dirname $(readlink -f $(which java))))
-ENV JAVA_HOME $JDK_HOME
+ENV JDK_HOME="$(dirname $(dirname $(readlink -f $(which java))))"
+ENV JAVA_HOME=$JDK_HOME
 
 # Settings for python
 RUN ln -fs $(which python3) /usr/bin/python && ln -fs $(which pip3) /usr/bin/pip
@@ -75,7 +74,7 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 RUN curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
 # Install Sonar Scanner CLI
-ENV SONAR_SCANNER_VERSION 7.0.2.4839
+ENV SONAR_SCANNER_VERSION=7.0.2.4839
 RUN arch=$(dpkg --print-architecture) && \
     if [ $arch = "amd64" ]; then \
       TARGET_ARCH=linux-x64; \
@@ -98,7 +97,7 @@ RUN add-apt-repository ppa:dotnet/backports && \
     apt-get update && \
     apt-get install -y dotnet-sdk-9.0
 
-ENV PATH $PATH:/root/.nuget/tools:/root/.dotnet/tools
+ENV PATH=$PATH:/root/.nuget/tools:/root/.dotnet/tools
 
 # Install golang
 RUN add-apt-repository ppa:longsleep/golang-backports && \
@@ -106,34 +105,35 @@ RUN add-apt-repository ppa:longsleep/golang-backports && \
     apt-get install -y golang-go
 
 # Settings for golang
-ENV GOROOT /usr/local/go
-ENV GOPATH /home/jenkins/go
-ENV PATH $PATH:/usr/local/go/bin:$GOPATH/bin
+ENV GOROOT=/usr/local/go
+ENV GOPATH=/home/jenkins/go
+ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
 
 # Install sdkman
 RUN curl -s "https://get.sdkman.io" | bash
 
 # Install gradle
-ENV GRADLE_VERSION 8.13
-RUN sdk install gradle ${GRADLE_VERSION}
+ENV GRADLE_VERSION=8.13
+RUN source "/root/.sdkman/bin/sdkman-init.sh" && \
+    sdk install gradle ${GRADLE_VERSION}
 
 # Install Maven
-ENV MAVEN_VERSION 3.9.9
+ENV MAVEN_VERSION=3.9.9
 RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -C /opt -xzv
-ENV M2_HOME /opt/apache-maven-$MAVEN_VERSION
-ENV maven.home $M2_HOME
-ENV M2 $M2_HOME/bin
-ENV PATH $PATH:$M2:${JAVA_HOME}/bin
+ENV M2_HOME=/opt/apache-maven-$MAVEN_VERSION
+ENV maven.home=$M2_HOME
+ENV M2=$M2_HOME/bin
+ENV PATH=$PATH:$M2:${JAVA_HOME}/bin
 
 # Install ant
-ENV ANT_VERSION 1.10.15
+ENV ANT_VERSION=1.10.15
 RUN wget -q https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
     tar -xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
     mv apache-ant-${ANT_VERSION} /opt/ant && \
     rm apache-ant-${ANT_VERSION}-bin.tar.gz
-ENV ANT_HOME /opt/ant
-ENV PATH ${PATH}:${ANT_HOME}/bin
+ENV ANT_HOME=/opt/ant
+ENV PATH=${PATH}:${ANT_HOME}/bin
 
 # Install nvm
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
