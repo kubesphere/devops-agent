@@ -99,17 +99,15 @@ RUN curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.73/ks-
 
 # Install golang
 ENV GOVERSION=1.23
+ENV GOROOT=/usr/lib/go-${GOVERSION}
+ENV GOPATH=$JENKINS_HOME/go
+ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
 RUN add-apt-repository -y ppa:longsleep/golang-backports && \
     apt-get update && \
     apt-get install -y golang-${GOVERSION}-go
 
 RUN go env -w GOPATH=$JENKINS_HOME/go
-
-# Settings for golang
-ENV GOROOT=/usr/lib/go-${GOVERSION}
-ENV GOPATH=$JENKINS_HOME/go
-ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
 
 # Install sdkman
 RUN curl -s "https://get.sdkman.io" | bash
