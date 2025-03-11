@@ -20,6 +20,7 @@ RUN echo '. "${BASH_ENV}"' >> /root/.bashrc
 RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
+    git \
     curl \
     perl \
     openssl \
