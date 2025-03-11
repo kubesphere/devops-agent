@@ -1,10 +1,11 @@
 FROM ubuntu:24.04
 
+ARG TARGETARCH
+
 # Set working directory
 WORKDIR /root
 
-# Set PATH
-ENV PATH=$PATH:/usr/local:/usr/local/bin
+ENV JENKINS_HOME /home/jenkins
 
 # Set Bash as the default shell
 RUN chsh -s /bin/bash
@@ -48,8 +49,9 @@ RUN apt-get update && \
     openjdk-21-jdk
 
 ## Settings for Java
-ENV JDK_HOME="$(dirname $(dirname $(readlink -f $(which java))))"
+ENV JDK_HOME=/usr/lib/jvm/java-21-openjdk-${TARGETARCH}
 ENV JAVA_HOME=$JDK_HOME
+ENV PATH=$PATH:${JAVA_HOME}/bin
 
 # Settings for python
 RUN ln -fs $(which python3) /usr/bin/python && ln -fs $(which pip3) /usr/bin/pip
@@ -100,9 +102,11 @@ RUN add-apt-repository ppa:longsleep/golang-backports && \
     apt-get update && \
     apt-get install -y golang-go
 
+RUN go env -w GOPATH=$JENKINS_HOME/go
+
 # Settings for golang
-ENV GOROOT="$(go env GOROOT)"
-ENV GOPATH="$(go env GOPATH)"
+ENV GOROOT=/usr/local/go
+ENV GOPATH=$JENKINS_HOME/go
 ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
 
@@ -120,7 +124,7 @@ RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/bi
 ENV M2_HOME=/opt/apache-maven-$MAVEN_VERSION
 ENV maven.home=$M2_HOME
 ENV M2=$M2_HOME/bin
-ENV PATH=$PATH:$M2:${JAVA_HOME}/bin
+ENV PATH=$PATH:$M2
 
 # Install ant
 ENV ANT_VERSION=1.10.15
@@ -155,26 +159,26 @@ COPY *.conf /etc/containers/
 VOLUME /var/lib/containers
 
 # Verify installations
-RUN docker --version && \
-    podman --version && \
-    java --version && \
-    helm version && \
-    kubectl version --client && \
-    ks version && \
-    sonar-scanner --version && \
-    dotnet --version && \
-    go version && \
-    gradle --version && \
-    mvn --version && \
-    ant --version && \
-    nvm --version && \
-    nvm current && \
-    npm --version && \
-    node --version && \
-    yarn --version && \
-    python --version && \
-    pip --version && \
-    kustomize version
+RUN echo "docker: $(docker --version) && \
+    podman: $(podman --version) && \
+    java: $(java --version) && \
+    helm: $(helm version) && \
+    kubectl: $(kubectl version --client) && \
+    ks: $(ks version) && \
+    sonar-scanner: $(sonar-scanner --version) && \
+    dotnet: $(dotnet --version) && \
+    go: $(go version) && \
+    gradle: $(gradle --version) && \
+    mvn: $(mvn --version) && \
+    ant: $(ant --version) && \
+    nvm: $(nvm --version) && \
+    nvm current: $(nvm current) && \
+    npm: $(npm --version) && \
+    node: $(node --version) && \
+    yarn: $(yarn --version) && \
+    python: $(python --version) && \
+    pip: $(pip --version) && \
+    kustomize: $(kustomize version)"
 
 # Clean up
 RUN apt-get clean && \
