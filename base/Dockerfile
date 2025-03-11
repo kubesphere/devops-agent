@@ -47,6 +47,7 @@ RUN apt-get update && \
     python3-pip \
     podman \
     software-properties-common \
+    apt-transport-https \
     openjdk-21-jdk
 
 ## Settings for Java
@@ -76,9 +77,12 @@ RUN curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/
     apt-get install -y helm
 
 # Install kubectl
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/$(dpkg --print-architecture)/kubectl" && \
-    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && \
-    rm kubectl
+RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg && \
+    chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg && \
+    echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list && \
+    chmod 644 /etc/apt/sources.list.d/kubernetes.list && \
+    apt-get update && \
+    apt-get install -y kubectl
 
 # Install kustomize
 RUN cd /usr/local/bin && curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
