@@ -18,7 +18,7 @@ RUN echo '. "${BASH_ENV}"' >> /root/.bashrc
 
 # Install utils
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     curl \
