@@ -48,6 +48,7 @@ RUN apt-get update && \
     podman \
     software-properties-common \
     apt-transport-https \
+    fuse-overlayfs \
     openjdk-21-jdk
 
 ## Settings for Java
