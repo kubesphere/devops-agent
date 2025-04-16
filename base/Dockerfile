@@ -200,4 +200,4 @@ RUN apt-get clean && \
 WORKDIR /home/jenkins
 
 # Default command
-CMD ["docker", "version"]
+CMD ["/bin/bash"]
