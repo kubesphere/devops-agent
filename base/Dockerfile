@@ -164,11 +164,6 @@ RUN add-apt-repository -y ppa:dotnet/backports && \
 
 ENV PATH=$PATH:/root/.nuget/tools:/root/.dotnet/tools
 
-# Settings for podman
-RUN mkdir -p /etc/containers
-COPY *.conf /etc/containers/
-VOLUME /var/lib/containers
-
 # Verify installations
 RUN printenv
 RUN echo "docker: $(docker --version)"
@@ -194,7 +189,7 @@ RUN echo "kustomize: $(kustomize version)"
 
 # Clean up
 RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Set working directory
 WORKDIR /home/jenkins
