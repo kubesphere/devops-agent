@@ -157,13 +157,6 @@ RUN npm install --global watch-cli vsce typescript
 # Install Yarn
 RUN npm install --global yarn
 
-# Install .NET
-RUN add-apt-repository -y ppa:dotnet/backports && \
-    apt-get update && \
-    apt-get install -y dotnet-sdk-9.0
-
-ENV PATH=$PATH:/root/.nuget/tools:/root/.dotnet/tools
-
 # Verify installations
 RUN printenv
 RUN echo "docker: $(docker --version)"
@@ -173,7 +166,6 @@ RUN echo "helm: $(helm version)"
 RUN echo "kubectl: $(kubectl version --client)"
 RUN echo "ks: $(ks version)"
 RUN echo "sonar-scanner: $(sonar-scanner --version)"
-RUN echo "dotnet: $(dotnet --version)"
 RUN echo "go: $(go version)"
 RUN echo "gradle: $(gradle --version)"
 RUN echo "mvn: $(mvn --version)"

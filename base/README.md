@@ -10,7 +10,6 @@ Base image with latest common sdks and utilities built with ubuntu, include:
 - python
 - maven
 - ant
-- dotnet
 - go
 - nodejs
 - yarn
