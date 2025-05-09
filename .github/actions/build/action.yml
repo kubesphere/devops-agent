@@ -55,6 +55,7 @@ runs:
           type=ref,event=branch,suffix=${{ inputs.tag-suffix }}
           type=ref,event=pr,suffix=${{ inputs.tag-suffix }}
           type=semver,pattern={{version}},prefix=v,suffix=${{ inputs.tag-suffix }}
+          type=raw,value=latest
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx

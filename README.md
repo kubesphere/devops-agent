@@ -10,7 +10,7 @@ The definition method of podTemplate is:
 
 ```bash
 podTemplate(containers: [
-    containerTemplate(name: 'base', image: 'kubesphere/builder-base:v2.1.0', ttyEnabled: true, command: 'cat')
+    containerTemplate(name: 'base', image: 'kubesphere/builder-base:latest', ttyEnabled: true, command: 'cat')
 ])
 ```
 
