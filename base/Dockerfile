@@ -7,15 +7,6 @@ WORKDIR /root
 
 ENV JENKINS_HOME /home/jenkins
 
-# Set Bash as the default shell
-RUN chsh -s /bin/bash
-SHELL ["/bin/bash", "-c"]
-
-# Create a script file sourced by both interactive and non-interactive bash shells
-ENV BASH_ENV=/root/.bash_env
-RUN touch "${BASH_ENV}"
-RUN echo '. "${BASH_ENV}"' >> /root/.bashrc
-
 # Install utils
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -124,8 +115,7 @@ RUN curl -s "https://get.sdkman.io" | bash
 
 # Install gradle
 ENV GRADLE_VERSION=8.13
-RUN source "/root/.sdkman/bin/sdkman-init.sh" && \
-    sdk install gradle ${GRADLE_VERSION}
+RUN bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install gradle ${GRADLE_VERSION}"
 
 RUN ln -fs /root/.sdkman/candidates/gradle/current/bin/gradle /usr/local/bin/gradle
 
@@ -146,38 +136,14 @@ RUN wget -q https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSIO
 ENV ANT_HOME=/opt/ant
 ENV PATH=${PATH}:${ANT_HOME}/bin
 
-# Install nvm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | PROFILE="${BASH_ENV}" bash
-RUN echo node > .nvmrc
+# Set up NodeSource repository for Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 
-# Download and install Node.js
-RUN nvm install 22
-RUN npm install --global watch-cli vsce typescript
+# Install Node.js
+RUN apt-get install -y nodejs
 
-# Install Yarn
-RUN npm install --global yarn
-
-# Verify installations
-RUN printenv
-RUN echo "docker: $(docker --version)"
-RUN echo "podman: $(podman --version)"
-RUN echo "java: $(java --version)"
-RUN echo "helm: $(helm version)"
-RUN echo "kubectl: $(kubectl version --client)"
-RUN echo "ks: $(ks version)"
-RUN echo "sonar-scanner: $(sonar-scanner --version)"
-RUN echo "go: $(go version)"
-RUN echo "gradle: $(gradle --version)"
-RUN echo "mvn: $(mvn --version)"
-RUN echo "ant: $(ant -version)"
-RUN echo "nvm: $(nvm --version)"
-RUN echo "nvm current: $(nvm current)"
-RUN echo "npm: $(npm --version)"
-RUN echo "node: $(node --version)"
-RUN echo "yarn: $(yarn --version)"
-RUN echo "python: $(python --version)"
-RUN echo "pip: $(pip --version)"
-RUN echo "kustomize: $(kustomize version)"
+# Install Yarn and other packages
+RUN npm install --global --force yarn watch-cli typescript
 
 # Clean up
 RUN apt-get clean && \
@@ -187,4 +153,4 @@ RUN apt-get clean && \
 WORKDIR /home/jenkins
 
 # Default command
-CMD ["/bin/bash"]
+ENTRYPOINT ["/bin/bash"]
