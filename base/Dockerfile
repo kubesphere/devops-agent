@@ -100,7 +100,7 @@ RUN curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.73/ks-
     mv ks /usr/local/bin/
 
 # Install golang
-ENV GOVERSION=1.23
+ENV GOVERSION=1.24
 ENV GOROOT=/usr/lib/go-${GOVERSION}
 ENV GOPATH=$JENKINS_HOME/go
 ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
@@ -115,7 +115,7 @@ RUN go env -w GOPATH=$JENKINS_HOME/go
 RUN curl -s "https://get.sdkman.io" | bash
 
 # Install gradle
-ENV GRADLE_VERSION=8.13
+ENV GRADLE_VERSION=8.14
 RUN bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install gradle ${GRADLE_VERSION}"
 
 RUN ln -fs /root/.sdkman/candidates/gradle/current/bin/gradle /usr/local/bin/gradle
