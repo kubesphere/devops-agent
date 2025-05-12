@@ -92,7 +92,8 @@ RUN arch=$(dpkg --print-architecture) && \
     wget -O sonar_scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-${TARGET_ARCH}.zip && \
     unzip sonar_scanner.zip -d /opt && \
     rm sonar_scanner.zip && \
-    ln -fs /opt/sonar-scanner-${SONAR_SCANNER_VERSION}-${TARGET_ARCH}/bin/sonar-scanner /usr/local/bin/sonar-scanner
+    mv /opt/sonar-scanner-${SONAR_SCANNER_VERSION}-${TARGET_ARCH} /opt/sonar-scanner && \
+    ln -fs /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner
 
 # Install ks (Kubesphere CLI)
 RUN curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.73/ks-linux-$(dpkg --print-architecture).tar.gz | tar xzv && \
@@ -121,8 +122,9 @@ RUN ln -fs /root/.sdkman/candidates/gradle/current/bin/gradle /usr/local/bin/gra
 
 # Install Maven
 ENV MAVEN_VERSION=3.9.9
-RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -C /opt -xzv
-ENV M2_HOME=/opt/apache-maven-$MAVEN_VERSION
+RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -C /opt -xzv && \
+    mv /opt/apache-maven-${MAVEN_VERSION} /opt/apache-maven
+ENV M2_HOME=/opt/apache-maven
 ENV maven.home=$M2_HOME
 ENV M2=$M2_HOME/bin
 ENV PATH=$PATH:$M2
