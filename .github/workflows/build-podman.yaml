@@ -23,3 +23,19 @@ jobs:
           platforms: linux/amd64,linux/arm64
           docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
           docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+
+  BuildMaven:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build maven agent
+        uses: ./.github/actions/build
+        with:
+          context: maven
+          dockerfile: maven/podman/Dockerfile
+          image-name: builder-maven
+          tag-suffix: -podman
+          platforms: linux/amd64,linux/arm64
+          docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+          docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+
