@@ -13,12 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build base agent
+      - name: Build base agent for docker
         uses: ./.github/actions/build
         with:
           context: base
           dockerfile: base/Dockerfile
           image-name: builder-base
+          platforms: linux/amd64,linux/arm64
+          docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+          docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+
+      - name: Build base agent for podman
+        uses: ./.github/actions/build
+        with:
+          context: base
+          dockerfile: base/podman/Dockerfile
+          image-name: builder-base
+          tag-suffix: -podman
           platforms: linux/amd64,linux/arm64
           docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
           docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
