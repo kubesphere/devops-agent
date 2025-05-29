@@ -21,9 +21,12 @@ Welcome to contribute.
 ## Images
 Images for both production and development:
 
-| Name                      | Introduction             | Docker Pulls                                                                                                                          |
-|---------------------------|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| `kubesphere/builder-base` | [README](base/README.md) | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-go.svg)](https://hub.docker.com/r/kubesphere/builder-go/tags) |
+| Name                      | Introduction             | Docker Pulls                                                                                                                              |
+|---------------------------|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `kubesphere/builder-base` | [README](base/README.md) | [![Docker Pulls](https://img.shields.io/docker/pulls/kubesphere/builder-base.svg)](https://hub.docker.com/r/kubesphere/builder-base/tags) |
+
+**NOTE**
+1. The image with tag `x.y.z-podman` has the very same utilities installed compared to the `x.y.z` image, the only difference is that the `x.y.z-podman` image makes a symbolic link of `docker` to `podman`, for easy use and backward compatibility.
 
 ## Legacy Images
 Legacy images built on centos:7 are no longer developed but may be still working.
