@@ -39,3 +39,19 @@ jobs:
           docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
           docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
 
+  BuildNodejs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build nodejs agent
+        uses: ./.github/actions/build
+        with:
+          context: nodejs
+          dockerfile: nodejs/podman/Dockerfile
+          image-name: builder-nodejs
+          tag-suffix: -podman
+          platforms: linux/amd64,linux/arm64
+          docker-namespace: ${{ secrets.DOCKER_HUB_USER }}
+          docker-password: ${{ secrets.DOCKER_HUB_SECRETS }}
+
+
