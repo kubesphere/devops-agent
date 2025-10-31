@@ -42,6 +42,11 @@ RUN apt-get update && \
     fuse-overlayfs \
     openjdk-21-jdk
 
+# for podman
+COPY storage.conf /etc/containers/storage.conf
+COPY containers.conf /etc/containers/containers.conf
+COPY registries.conf /etc/containers/registries.conf
+
 ## Settings for Java
 ENV JDK_HOME=/usr/lib/jvm/java-21-openjdk-${TARGETARCH}
 ENV JAVA_HOME=$JDK_HOME
