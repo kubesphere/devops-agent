@@ -37,6 +37,7 @@ RUN apt-get update && \
     python3 \
     python3-pip \
     podman \
+    tini \
     software-properties-common \
     apt-transport-https \
     openjdk-21-jdk
@@ -159,4 +160,4 @@ RUN apt-get clean && \
 WORKDIR /home/jenkins
 
 # Default command
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
