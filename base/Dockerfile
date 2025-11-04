@@ -38,6 +38,7 @@ RUN apt-get update && \
     python3-pip \
     podman \
     tini \
+    fuse-overlayfs \
     software-properties-common \
     apt-transport-https \
     openjdk-21-jdk
@@ -46,6 +47,7 @@ RUN apt-get update && \
 COPY storage.conf /etc/containers/storage.conf
 COPY containers.conf /etc/containers/containers.conf
 COPY registries.conf /etc/containers/registries.conf
+VOLUME /var/lib/containers
 
 ## Settings for Java
 ENV JDK_HOME=/usr/lib/jvm/java-21-openjdk-${TARGETARCH}
@@ -84,64 +86,9 @@ RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | gpg --d
 # Install kustomize
 RUN cd /usr/local/bin && curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
-# Install Sonar Scanner CLI
-ENV SONAR_SCANNER_VERSION=7.0.2.4839
-RUN arch=$(dpkg --print-architecture) && \
-    if [ $arch = "amd64" ]; then \
-      TARGET_ARCH=linux-x64; \
-    elif [ $arch = "arm64" ]; then \
-      TARGET_ARCH=linux-aarch64; \
-    else \
-      echo "Unsupported architecture: $arch" && exit 1; \
-    fi && \
-    wget -O sonar_scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-${TARGET_ARCH}.zip && \
-    unzip sonar_scanner.zip -d /opt && \
-    rm sonar_scanner.zip && \
-    mv /opt/sonar-scanner-${SONAR_SCANNER_VERSION}-${TARGET_ARCH} /opt/sonar-scanner && \
-    ln -fs /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner
-
 # Install ks (Kubesphere CLI)
 RUN curl -fL https://github.com/kubesphere-sigs/ks/releases/download/v0.0.73/ks-linux-$(dpkg --print-architecture).tar.gz | tar xzv && \
     mv ks /usr/local/bin/
-
-# Install golang
-ENV GOVERSION=1.24
-ENV GOROOT=/usr/lib/go-${GOVERSION}
-ENV GOPATH=$JENKINS_HOME/go
-ENV PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-RUN mkdir -p $GOPATH/bin && mkdir -p $GOPATH/src && mkdir -p $GOPATH/pkg
-RUN add-apt-repository -y ppa:longsleep/golang-backports && \
-    apt-get update && \
-    apt-get install -y golang-${GOVERSION}-go
-
-RUN go env -w GOPATH=$JENKINS_HOME/go
-
-# Install sdkman
-RUN curl -s "https://get.sdkman.io" | bash
-
-# Install gradle
-ENV GRADLE_VERSION=8.14
-RUN bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install gradle ${GRADLE_VERSION}"
-
-RUN ln -fs /root/.sdkman/candidates/gradle/current/bin/gradle /usr/local/bin/gradle
-
-# Install Maven
-ENV MAVEN_VERSION=3.9.9
-RUN curl -f -L https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -C /opt -xzv && \
-    mv /opt/apache-maven-${MAVEN_VERSION} /opt/apache-maven
-ENV M2_HOME=/opt/apache-maven
-ENV maven.home=$M2_HOME
-ENV M2=$M2_HOME/bin
-ENV PATH=$PATH:$M2
-
-# Install ant
-ENV ANT_VERSION=1.10.15
-RUN wget -q https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
-    tar -xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
-    mv apache-ant-${ANT_VERSION} /opt/ant && \
-    rm apache-ant-${ANT_VERSION}-bin.tar.gz
-ENV ANT_HOME=/opt/ant
-ENV PATH=${PATH}:${ANT_HOME}/bin
 
 # Set up NodeSource repository for Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
@@ -150,7 +97,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 RUN apt-get install -y nodejs
 
 # Install Yarn and other packages
-RUN npm install --global --force yarn watch-cli typescript
+RUN npm install --global --force npm@10.9.3 yarn watch-cli typescript
+
+# Install pnpm
+RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" env PNPM_VERSION=10.17.1 sh -
 
 # Clean up
 RUN apt-get clean && \
