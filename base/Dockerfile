@@ -97,10 +97,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 RUN apt-get install -y nodejs
 
 # Install Yarn and other packages
-RUN npm install --global --force npm@10.9.3 yarn watch-cli typescript
+RUN npm install --global --force corepack@latest npm@10.9.3 yarn watch-cli typescript
+
+# enable corepack
+RUN corepack enable pnpm
 
 # Install pnpm
-RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" env PNPM_VERSION=10.17.1 sh -
+RUN corepack use pnpm@10.17.1
 
 # Clean up
 RUN apt-get clean && \
