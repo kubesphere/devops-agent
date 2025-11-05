@@ -103,7 +103,8 @@ RUN npm install --global --force corepack@latest npm@10.9.3 yarn watch-cli types
 RUN corepack enable pnpm
 
 # Install pnpm
-RUN corepack use pnpm@10.17.1
+RUN corepack prepare pnpm@10.17.1 --activate
+ENV COREPACK_ENABLE_DOWNLOADS=0
 
 # Clean up
 RUN apt-get clean && \
