@@ -39,8 +39,15 @@ RUN apt-get update && \
     podman \
     software-properties-common \
     apt-transport-https \
+    tini \
     fuse-overlayfs \
     openjdk-21-jdk
+
+# for podman
+COPY storage.conf /etc/containers/storage.conf
+COPY containers.conf /etc/containers/containers.conf
+COPY registries.conf /etc/containers/registries.conf
+VOLUME /var/lib/containers
 
 ## Settings for Java
 ENV JDK_HOME=/usr/lib/jvm/java-21-openjdk-${TARGETARCH}
@@ -62,9 +69,9 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin
 
 # Install helm
-RUN curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null && \
-    apt-get install apt-transport-https --yes && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+RUN apt-get install curl gpg apt-transport-https --yes && \
+    curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
     apt-get update && \
     apt-get install -y helm
 
@@ -145,7 +152,17 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 RUN apt-get install -y nodejs
 
 # Install Yarn and other packages
-RUN npm install --global --force yarn watch-cli typescript
+RUN npm install --global --force corepack@latest npm yarn watch-cli typescript
+
+# Enable corepack
+RUN corepack enable pnpm
+
+# Install pnpm
+RUN corepack prepare pnpm --activate
+
+# Disable corepack update check
+ENV COREPACK_ENABLE_DOWNLOADS=0
+ENV COREPACK_DEFAULT_TO_LATEST=0
 
 # Clean up
 RUN apt-get clean && \
@@ -155,4 +172,4 @@ RUN apt-get clean && \
 WORKDIR /home/jenkins
 
 # Default command
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
